@@ -3,7 +3,6 @@
 #include<graphics.h>
 #include <stdlib.h>
 #include<time.h>
-
 void draw_1();
 void draw_2();
 void draw_3();
@@ -12,18 +11,30 @@ void draw_5();
 void draw_6();
 void draw_7();
 void draw_8();
+void draw_header();
+void game_over(char *);
+void game_won(char *);
 void draw_animation();
 void draw_lines_for_no_of_words(int length);
 void start_game();
 void get_word(char *word);
+int search_char(char *string,char input);
 int no_of_steps_performed=0;
-
+char wrong_chars[25];
+char wrong_chars_index=0;
+struct matching_char_map
+{
+	int index;
+	char ch;
+};
+struct matching_char_map arr[25];
+int matching_arr_index=0;
 	void main()
 	{
 	int gdriver = DETECT,gmode;
-	time_t t;	
-	srand((unsigned) time(&t)); 		//Initialized Random Number
+	time_t t;
 	initgraph(&gdriver,&gmode,"C:\\TC\\BGI"); //Initialized Graphics Driver
+	srand((unsigned) time(&t)); 		//Initialized Random Number
 	start_game();
 	getch();
 	}
@@ -41,36 +52,132 @@ void get_word(char *word)
 	strcpy(word,str);
 	fclose(fp);
 }
+int search_char(char *string,char input){
+	int i=0,j=0;
+	int f=0;
+	int contained_in_arr=0;
+	for(i=0;i<strlen(string);i++){
+		if(string[i]==input){
+			for(j=0;j<matching_arr_index;j++){
+				if(arr[j].index==i && arr[j].ch==input){
+					contained_in_arr=1;
+						}
+			}
+			if(!contained_in_arr){
+				arr[matching_arr_index].ch=input;
+				arr[matching_arr_index].index=i;
+				matching_arr_index++;
+				f=1;
+			}
+			else{
+			contained_in_arr=0;
+			}
+		}
+	}
+	return f;
+}
+void draw_chars(){
+   int i=0;
+   int x=20;
+   int diff=20;
+   char *str;
+   for(i=0;i<wrong_chars_index;i++)
+   {
+	str[0]=wrong_chars[i];
+	str[1]='\0';
+	settextstyle(DEFAULT_FONT,HORIZ_DIR,2);
+	outtextxy(x,125,str);
+	x=x+diff;
+   }
+}
+
+void draw_right_chars(int length)
+{
+	int i=0,j=0;
+	int x=0,y=20,text_x=0;
+	int diff=20;
+	int f=0;
+	char *str;
+	for(i=0;i<matching_arr_index;i++)
+	{
+		    str[0]=arr[i].ch;
+		    str[1]='\0';
+		    settextstyle(DEFAULT_FONT,HORIZ_DIR,2);
+		    outtextxy(x,65,str);
+		    x=x+diff;
+	}
+	while(j<length)
+	{
+		   settextstyle(DEFAULT_FONT,HORIZ_DIR,2);
+		    outtextxy(text_x,y,"__");
+		    text_x=text_x+40;
+		    for(i=0;i<matching_arr_index;i++)
+		    {
+				if(arr[i].index==j)
+				{
+					f=1;
+					break;
+				}
+		    }
+		    if(f==1)
+		    {
+			f=0;
+			str[0]=arr[i].ch;
+			str[1]='\0';
+			outtextxy(text_x-40,y-10,str);
+		    }
+		    j++;
+	}
+}
 void start_game()
 {
 		char *our_word;
-		int len;
+		int len=0;
+		char input;
 		get_word(our_word);
 		len=strlen(our_word);
+//		printf("\n%s",our_word);
 		draw_lines_for_no_of_words(len);
-		printf("\n%s",our_word);
+		draw_header();
+		    settextstyle(DEFAULT_FONT,HORIZ_DIR,3);
+		    outtextxy(0,40,"Right");
+			settextstyle(DEFAULT_FONT,HORIZ_DIR,3);
+		    outtextxy(0,100,"Wrong");
+		while(matching_arr_index<len && no_of_steps_performed<8){
+			input=getch();
+			if(!search_char(our_word,input)){
+				wrong_chars[wrong_chars_index]=input;
+				wrong_chars_index++;
+				draw_chars();
+				draw_animation();
+				draw_chars();
+				   settextstyle(DEFAULT_FONT,HORIZ_DIR,3);
+				    outtextxy(0,40,"Right");
+				settextstyle(DEFAULT_FONT,HORIZ_DIR,3);
+				    outtextxy(0,100,"Wrong");
+				    draw_right_chars(len);
+				    draw_header();
+			}
+			else{
+				draw_right_chars(len);
+			}
+		}
+		if(no_of_steps_performed<8){
+			game_won(our_word);
+		}else{
+			game_over(our_word);
+		}
 }
 void draw_lines_for_no_of_words(int length)
 {
 	int j=0;
-	int x=10,y=10;
-	int temp_x=0;
+	int x=0,y=20;
 	while(j<length)
 	{
-
-		temp_x=x+5;
-		while(x<temp_x)
-		{
-			putpixel(x,y,RED);
-			x=x+1;
-		}
-		temp_x=x+5;
-		while(x<temp_x)
-		{
-			putpixel(x,y,WHITE);
-			x=x+1;
-		}
-		j++;
+		   settextstyle(DEFAULT_FONT,HORIZ_DIR,2);
+		    outtextxy(x,y,"__");
+		    x=x+40;
+		    j++;
 	}
 }
 void draw_animation()
@@ -108,17 +215,17 @@ void draw_animation()
 	else if(no_of_steps_performed==7)
 	{
 		draw_8();
-		printf("GAME OVER");
+  //		printf("GAME OVER");
 	}
 	else
 	{
-		printf("GAME OVER");
+//		printf("GAME OVER");
 	}
 }
 void draw_1()
 {
 	int i=0,j=250;
-	int d=10;
+	int d=5;
 	int gdriver = DETECT,gmode;
 	initgraph(&gdriver,&gmode,"C:\\TC\\BGI");
 	//Verticle Line
@@ -127,14 +234,18 @@ void draw_1()
 		 putpixel(j,i,3);
 		 putpixel(j+1,i,2);
 		 putpixel(j+2,i,4);
+		 putpixel(j-1,i,1);
+		 putpixel(j-2,i,5);
 		 delay(d);
 	}
 	//Horizontal Line
 	for(i=250;i<400;i++)
 	{
 		putpixel(i,40,1);
-		putpixel(i,40,2);
-		putpixel(i,40,3);
+		putpixel(i,40+1,2);
+		putpixel(i,40+2,3);
+		putpixel(i,38,4);
+		putpixel(i,39,5);
 		delay(d);
 	}
 	//Left Cross Line
@@ -245,4 +356,26 @@ void draw_8()
 		delay(d);
 	}
 	no_of_steps_performed++;
+}
+void game_over(char *str){
+			char *text="GAME OVER !!!";
+			char *word="Right Word is ";
+			settextstyle(10,HORIZ_DIR,3);
+		    outtextxy(0,getmaxy()-120,text);
+			strcat(word,str);
+			settextstyle(10,HORIZ_DIR,3);
+		    outtextxy(0,getmaxy()-60,word);
+}
+void game_won(char *str){
+			char *text="YOU WON !!!";
+			char *word="Right Word is ";
+			settextstyle(10,HORIZ_DIR,3);
+		    outtextxy(0,getmaxy()-120,text);
+			strcat(word,str);
+			settextstyle(10,HORIZ_DIR,3);
+		    outtextxy(0,getmaxy()-60,word);
+}
+void draw_header(){
+	settextstyle(10,VERT_DIR,6);
+	outtextxy(getmaxx()-100,0,"HANGMAN");
 }
