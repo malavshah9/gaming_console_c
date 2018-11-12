@@ -7,6 +7,7 @@ char show_array[9] = "123456789";
 char get_choice(){
 	char choice;
 	printf("Choose your Charcter \n"); 
+	scanf("%c",&choice);
 	while(choice != 'o' && choice != 'x' && choice != 'O' && choice != 'X')
 	{
 		scanf("%c",&choice);

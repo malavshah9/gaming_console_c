@@ -27,12 +27,13 @@ void screen_refresh()
 
 }
 int main (){
-	int game_type;
+	int game_type=0;
 	int game_state=-1;
 	char player,p1,p2,computer; 
 	system("clear");
 	while(game_type != 1 && game_type != 2){
-	    printf("WELCOME TO TIC-TAC-TOE. PRESS 1 FOR ONE PLAYER GAME AND 2 FOR TWO PLAYER GAME \n");
+	    printf("WELCOME TO TIC-TAC-TOE. PRESS 1 FOR ONE PLAYER GAME AND 
+		2 FOR TWO PLAYER GAME \n");
 		scanf("%d",&game_type); 
 	}
 	if(game_type == 1)
