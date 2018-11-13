@@ -136,7 +136,7 @@ void start_game()
 		char input;
 		get_word(our_word);
 		len=strlen(our_word);
-		printf("\n%s",our_word);
+//		printf("\n%s",our_word);
 		draw_lines_for_no_of_words(len);
 		draw_header();
 		    settextstyle(DEFAULT_FONT,HORIZ_DIR,3);

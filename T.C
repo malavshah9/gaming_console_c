@@ -1,7 +1,13 @@
+// #include <t.h>
 #include <stdio.h>
-#include<stdbool.h>
+//#include<stdint.h>
 #include<stdlib.h>
 #include <ctype.h>
+// #define _int        int
+// #define int        int
+// #define 0        0
+// #define 1        1
+
 char main_array[10] = "          "; 
 char show_array[9] = "123456789";
 char get_choice(){
@@ -16,16 +22,17 @@ char get_choice(){
 	choice = toupper(choice);
 	return choice; 
 }
-bool check_draw() 
+int check_draw()
 {
 	int i;
 	for(i=1; i<=9; i++) {
-		if (main_array [i] != ' ')
+		if (main_array [i] == ' ')
 		{
-			return false; 
+			return 0;
 		}
-		return true;
+ //		return 1;
 	}
+	return 1;
 }
 int genrate_random_move ()
 {
@@ -118,49 +125,49 @@ int can_win(char player)
 	}
 return -1; 
 }
-bool has_won(char player)
+int has_won(char player)
 {
 	// checks if the player has won 
 	if(main_array[1] == player && main_array[2] == player && main_array[3] == player){
-		return true;
+		return 1;
 	}
 	if(main_array[4] == player && main_array[5] == player && main_array[6] == player){
-		return true;
+		return 1;
 	}
 	if(main_array[7] == player && main_array[8] == player && main_array[9] == player){
-		return true;
+		return 1;
 	}
 	if(main_array[1] == player && main_array[4] == player && main_array[7] == player){
-		return true;
+		return 1;
 	}
 	if(main_array[2] == player && main_array[5] == player && main_array[8] == player){
-		return true;
+		return 1;
 	}
 	if(main_array[3] == player && main_array[6] == player && main_array[9] == player){
-		return true;
+		return 1;
 	}
 	if(main_array[1] == player && main_array[5] == player && main_array[9] == player){
-		return true;
+		return 1;
 	}
 	if(main_array[3] == player && main_array[5] == player && main_array[7] == player){
-		return true;
+		return 1;
 	}
-	return false;
+	return 0;
 }
 
-bool put(int position,char player) 
+int put(int position,char player)
 { 
 	// This function puts the char if there is space and the input char is also valid
 	if(player != 'O' && player != 'X'){
-		return false;
+		return 0;
 	}
 	else{ 
 		if (main_array[position] != ' '){
-			return false; 
+			return 0; 
 		}
 		else{ 
 			main_array[position] = player;
-			return true;
+			return 1;
 		}
 
 	}
@@ -171,7 +178,7 @@ void player_move(char player){
 	int pos; 		
 	printf("(Please give your choice) YOUR TURN:=>  \n"); 
 	scanf("%d",&pos); 
-	while(put(pos,player) == false){
+	while(put(pos,player) == 0){
 		printf("Please provide a valid choice.\n");
 		scanf("%d",&pos);
 	}
@@ -207,4 +214,83 @@ int get_game_status (char p1, char p2){
 		return 2; 
 	}
 	return -1;
+}
+void screen_refresh_2()
+{
+
+	/*
+	This function refresh the entire
+	game screen. 
+	*/
+	// system("clear");
+	clrscr();
+	printf("Hello Lets play tic-tac-toe");
+	printf("\n\n\n%c | %c | %c\n--|---|--\n%c | %c | %c\n--|---|--\n%c | %c | %c\n",main_array[1],main_array[2],main_array[3],main_array[4],main_array[5],main_array[6],main_array[7],main_array[8],main_array[9]);
+}
+void screen_refresh()
+{
+	/*
+	This function refresh the entire
+	game screen. 
+	*/
+	//sleep(1);
+	// system("clear");
+	clrscr();
+	printf("Hello Lets play tic-tac-toe");
+	printf("\n\n\n%c | %c | %c\n--|---|--\n%c | %c | %c\n--|---|--\n%c | %c | %c\n",main_array[1],main_array[2],main_array[3],main_array[4],main_array[5],main_array[6],main_array[7],main_array[8],main_array[9]);
+	printf("\n\nThe following is all the numbers for every poistion\n");
+	printf("\n\n\n%c | %c | %c\n--|---|--\n%c | %c | %c\n--|---|--\n%c | %c | %c\n",show_array[0],show_array[1],show_array[2],show_array[3],show_array[4],show_array[5],show_array[6],show_array[7],show_array[8]);
+	//fflush(stdout);
+
+}
+int main (){
+	int game_type=0;
+	int game_state=-1;
+	char player,p1,p2,computer; 
+	// system("clear");
+	clrscr();
+	while(game_type != 1 && game_type != 2){
+	    printf("WELCOME TO TIC-TAC-TOE. PRESS 1 FOR ONE PLAYER GAME AND FOR TWO PLAYER GAME \n");
+		scanf("%d",&game_type); 
+	}
+	if(game_type == 1)
+	{
+		player = get_choice(); 
+		if (player == 'O')
+		{
+			computer = 'X';
+		}
+		else
+		{
+			computer = 'O'; 
+
+		}
+		while(1) // game loop;
+		{
+			game_state = -1;
+			screen_refresh();
+			player_move(player);
+			game_state = get_game_status(player,computer); 
+			screen_refresh();
+			if(game_state != -1) break; 
+			computer_move(computer,player);
+			game_state = get_game_status(player,computer); 
+			if(game_state != -1) break;
+		}
+		screen_refresh_2();
+		if (game_state == 0){ 
+			printf("\n\nGame Drawn\n\n");
+		}
+		else if(game_state == 1){
+			printf("\n\nCongrats You won the game\n\n"); 
+		}
+		else if (game_state == 2){
+			printf("\n\nSorry! You lost the game\n\n");
+		}
+	       getch();
+	
+	}
+	
+	return 0;
+
 }
